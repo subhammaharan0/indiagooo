@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<title>India Cinematic Hacker Intro</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: monospace;
+}
+body{
+    background:black;
+    overflow:hidden;
+}
+
+/* ===== START ===== */
+#start{
+    position:fixed;
+    inset:0;
+    background:black;
+    color:#0f0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    letter-spacing:2px;
+    cursor:pointer;
+    z-index:10;
+}
+
+/* ===== MATRIX ===== */
+canvas{
+    position:fixed;
+    inset:0;
+}
+
+/* ===== GLITCH TEXT ===== */
+#glitch{
+    position:fixed;
+    top:42%;
+    width:100%;
+    text-align:center;
+    font-size:38px;
+    color:#0f0;
+    opacity:0;
+    animation:glitch 0.9s infinite;
+}
+@keyframes glitch{
+    0%{text-shadow:2px 0 red,-2px 0 blue;}
+    50%{text-shadow:-3px -2px red,3px 2px blue;}
+    100%{text-shadow:2px 0 red,-2px 0 blue;}
+}
+
+/* ===== FLAG ===== */
+#flag{
+    display:none;
+    position:fixed;
+    inset:0;
+    flex-direction:column;
+    animation:fadeIn 1.8s ease forwards;
+}
+@keyframes fadeIn{
+    from{opacity:0;}
+    to{opacity:1;}
+}
+.stripe{flex:1;}
+.saffron{background:#FF9933;}
+.white{
+    background:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+.green{background:#138808;}
+
+/* ===== SUDARSHAN CHAKRA ===== */
+.sudarshan{
+    width:170px;
+    height:170px;
+    position:relative;
+    animation:spin 0.9s linear infinite;
+    filter:drop-shadow(0 0 25px #000080);
+}
+.blade{
+    position:absolute;
+    width:6px;
+    height:85px;
+    background:#000080;
+    top:0;
+    left:50%;
+    transform-origin:50% 100%;
+}
+@keyframes spin{
+    from{transform:rotate(0deg);}
+    to{transform:rotate(360deg);}
+}
+
+#finalText{
+    position:absolute;
+    bottom:32px;
+    width:100%;
+    text-align:center;
+    color:white;
+    font-size:28px;
+    letter-spacing:2px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="start">CLICK TO  SYSTEM</div>
+
+<canvas id="matrix"></canvas>
+<div id="glitch">INITIALIZING...m</div>
+
+<div id="flag">
+    <div class="stripe saffron"></div>
+    <div class="stripe white">
+        <div class="sudarshan" id="chakra"></div>
+    </div>
+    <div class="stripe green"></div>
+    <div id="finalText"> HAPPY REPUBLIC DAY </div>
+</div>
+
+<script>
+/* ===== AUDIO ===== */
+let audioCtx, osc, gain;
+function startSound(){
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    osc=audioCtx.createOscillator();
+    gain=audioCtx.createGain();
+    osc.type="square";
+    osc.frequency.value=85;
+    gain.gain.value=0.035;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+}
+
+/* ===== MATRIX ===== */
+const canvas=document.getElementById("matrix");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+
+const chars="01 ACCESS ROOT 192.168.0.1 SYSTEM";
+const size=16;
+const cols=canvas.width/size;
+const drops=Array(Math.floor(cols)).fill(1);
+
+function draw(){
+    ctx.fillStyle="rgba(0,0,0,0.12)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="#00ff00";
+    ctx.font=size+"px monospace";
+    for(let i=0;i<drops.length;i++){
+        const t=chars[Math.floor(Math.random()*chars.length)];
+        ctx.fillText(t,i*size,drops[i]*size);
+        if(drops[i]*size>canvas.height && Math.random()>0.96)
+            drops[i]=0;
+        drops[i]++;
+    }
+}
+let interval;
+
+/* ===== BUILD CHAKRA ===== */
+const chakra=document.getElementById("chakra");
+for(let i=0;i<24;i++){
+    const b=document.createElement("div");
+    b.className="blade";
+    b.style.transform=`rotate(${i*15}deg) translateX(-50%)`;
+    chakra.appendChild(b);
+}
+
+/* ===== START SEQUENCE ===== */
+document.getElementById("start").onclick=()=>{
+    document.getElementById("start").style.display="none";
+    startSound();
+    interval=setInterval(draw,35);
+
+    const glitch=document.getElementById("glitch");
+    glitch.style.opacity=1;
+
+    /* ===== CINEMATIC TEXT FLOW ===== */
+    setTimeout(()=>glitch.innerText="BREACHING FIREWALL...",900);
+    setTimeout(()=>glitch.innerText="ROOT ACCESS GRANTED",2100);
+    setTimeout(()=>glitch.innerText="UPLOADING NATION CORE",3600);
+    setTimeout(()=>glitch.innerText="INDIA ONLINE 🇮🇳",4800);
+
+    /* ===== EXACT 5.60 SECONDS ===== */
+    setTimeout(()=>{
+        clearInterval(interval);
+        osc.stop();
+        canvas.style.display="none";
+        glitch.style.display="none";
+        document.getElementById("flag").style.display="flex";
+    },5600);
+};
+</script>
+
+</body>
+</html>
